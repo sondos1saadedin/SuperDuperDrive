@@ -43,31 +43,6 @@ public class HomeController {
     }
 
 
-    @PostMapping("/upload")
-    public String saveFile(@ModelAttribute("fileUpload") MultipartFile fileUpload, Model model, Authentication authentication) {
-        String fileName = StringUtils.cleanPath(fileUpload.getOriginalFilename());
 
-        // save the file on the local file system
-        try {
-            fileService.saveFile(fileUpload, userService.getUser(authentication.getName()).getUserid());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        model.addAttribute("files", fileService.getUserFiles(userService.getUser(authentication.getName()).getUserid()));
-        return "home";
-    }
-
-
-
-
-    @GetMapping("/download/{id}")
-    public ResponseEntity getFile(@PathVariable String id, Authentication authentication) {
-        File fileDB = fileService.getUserFileByFileName(userService.getUser(authentication.getName()).getUserid(), id);
-
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(fileDB.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getFileName() + "\"")
-                .body(new ByteArrayResource(fileDB.getFileData()));
-    }
 
 }

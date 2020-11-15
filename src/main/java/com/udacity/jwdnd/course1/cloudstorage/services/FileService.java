@@ -3,14 +3,10 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.websocket.Decoder;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -39,6 +35,10 @@ public class FileService {
 
 
     public File getUserFileByFileName(Integer userId, String fileName) {
-        return fileMapper.getUserFileByFileName(userId, fileName);
+        return fileMapper.getUserFile(userId, fileName);
+    }
+
+    public int deleteUserFile(Integer userId, String fileName) {
+        return fileMapper.deleteUserFile(userId, fileName);
     }
 }
