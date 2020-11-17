@@ -26,6 +26,12 @@
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
                         <form action="#" enctype="multipart/form-data" method="POST" th:action="@{/upload}">
+                            <div th:if="${successMsg}" class="alert alert-dark">
+                                <span th:text="${successMsg}"></spanth:text></span>
+                            </div>
+                            <div th:if="${errorMsg}" class="alert alert-danger">
+                                <span th:text="${errorMsg}"></spanth:text></span>
+                            </div>
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -75,13 +81,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note: ${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button" class="btn btn-success" th:onclick="javascript:showNoteModal([[${note}]])">Edit</button>
+                                            <a class="btn btn-danger" th:href="@{${'/deleteNote/' + note.noteId}}">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>
+                                        <td th:text="${note.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,7 +103,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" method="POST" th:action="@{/addOrUpdateNote}">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -134,14 +140,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="credential: ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-success" th:onclick="javascript:showCredentialModal([[${credential}]])">Edit</button>
+                                        <a class="btn btn-danger" th:href="@{${'/delete/' + credential.credentialId}}">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th scope="row" th:text="${credential.url}"></th>
+                                    <td th:text="${credential.username}"></td>
+                                    <td th:text="${credential.password}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -157,7 +163,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" method="POST" th:action="@{/addOrUpdateCredential}">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">URL</label>
@@ -186,26 +192,34 @@
             </div>
         </div>
 
-        <script th:src="@{/js/jquery-slim.min.js}"></script>
+        <script th:src="@{/js/jquery.min.js}"></script>
         <script th:src="@{/js/popper.min.js}"></script>
         <script th:src="@{/js/bootstrap.min.js}"></script>
 
         <!--For opening the note modal-->
         <script type="text/javascript">
             // For opening the note modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
-                $('#note-id').val(noteId ? noteId : '');
-                $('#note-title').val(noteTitle ? noteTitle : '');
-                $('#note-description').val(noteDescription ? noteDescription : '');
+            function showNoteModal(note) {
+                $('#note-id').val(note != null && note.noteId ? note.noteId : '');
+                $('#note-title').val(note != null && note.noteTitle ? note.noteTitle : '');
+                $('#note-description').val(note != null && note.noteDescription ? note.noteDescription : '');
                 $('#noteModal').modal('show');
             }
 
             // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
-                $('#credential-id').val(credentialId ? credentialId : '');
-                $('#credential-url').val(url ? url : '');
-                $('#credential-username').val(username ? username : '');
-                $('#credential-password').val(password ? password : '');
+            function showCredentialModal(credential) {
+                $('#credential-id').val(credential != null && credential.credentialId ? credential.credentialId : '');
+                $('#credential-url').val(credential != null && credential.url ? credential.url : '');
+                $('#credential-username').val(credential != null && credential.username ? credential.username : '');
+                $('#credential-password').val('');
+
+                if(credential != null && credential.password){
+                $.ajax({url: "/getDecryptedPassword", type:"POST", data:JSON.stringify(credential),async:false, contentType: "application/json",
+                 success: function(data, status){$('#credential-password').val(data);},
+                 error: function(e){console.log("ERROR : ", e);}
+                       }
+                     );
+                   }
                 $('#credentialModal').modal('show');
             }
         </script>

@@ -1,9 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,15 +30,27 @@ import java.util.Arrays;
 public class HomeController {
     private final FileService fileService;
     private final UserService userService;
+    private final NoteService noteService;
+    private final CredentialService credentialService;
+    private final EncryptionService encryptionService;
 
-    public HomeController(FileService fileService, UserService userService) {
+
+    public HomeController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService, EncryptionService encryptionService) {
         this.fileService = fileService;
         this.userService = userService;
+        this.noteService = noteService;
+        this.credentialService = credentialService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping("/home")
     public String retrieveFiles(Model model, Authentication authentication) {
-        model.addAttribute("files", fileService.getUserFiles(userService.getUser(authentication.getName()).getUserid()));
+        Integer userId = userService.getUser(authentication.getName()).getUserid();
+
+        model.addAttribute("files", fileService.getUserFiles(userId));
+        model.addAttribute("notes", noteService.getUserNotes(userId));
+        model.addAttribute("credentials", credentialService.getUserCredentials(userId));
+        model.addAttribute("encryptionService", encryptionService);
         return "home";
     }
 

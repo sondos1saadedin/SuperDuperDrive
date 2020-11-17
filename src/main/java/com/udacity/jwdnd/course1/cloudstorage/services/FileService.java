@@ -17,8 +17,7 @@ public class FileService {
         this.fileMapper = fileMapper;
     }
 
-
-    public void saveFile(MultipartFile multipartFile, Integer userId) throws IOException {
+    public void saveFile(Integer userId, MultipartFile multipartFile) throws IOException {
         File file = new File(null,
                 multipartFile.getOriginalFilename(),
                 multipartFile.getContentType(),
@@ -40,5 +39,9 @@ public class FileService {
 
     public int deleteUserFile(Integer userId, String fileName) {
         return fileMapper.deleteUserFile(userId, fileName);
+    }
+
+    public boolean isFileNameAvailable(Integer userId, String fileName) {
+        return getUserFileByFileName(userId, fileName) == null;
     }
 }
