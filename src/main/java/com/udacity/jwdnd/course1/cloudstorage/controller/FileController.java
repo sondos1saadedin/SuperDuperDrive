@@ -34,22 +34,22 @@ public class FileController {
 
     @PostMapping("/upload")
     public String saveFile(@ModelAttribute("fileUpload") MultipartFile fileUpload, Model model, Authentication authentication) {
-        if(StringUtils.isEmpty(fileUpload.getOriginalFilename())) {
-            model.addAttribute("errorMsg", "Please choose file, and try again");
-            return "home";
-        }
-
         Integer userId = userService.getUser(authentication.getName()).getUserid();
-        try {
-            if(fileService.isFileNameAvailable(userId, fileUpload.getOriginalFilename())) {
-                fileService.saveFile(userId, fileUpload);
-                model.addAttribute("successMsg", "File uploaded successfully.");
-            } else {
-                model.addAttribute("errorMsg", "Already this file name is existed, please choose another one, and try again.");
+
+        if (StringUtils.isEmpty(fileUpload.getOriginalFilename())) {
+            model.addAttribute("errorMsg", "Please choose file, and try again");
+        } else {
+            try {
+                if (fileService.isFileNameAvailable(userId, fileUpload.getOriginalFilename())) {
+                    fileService.saveFile(userId, fileUpload);
+                    model.addAttribute("successMsg", "File uploaded successfully.");
+                } else {
+                    model.addAttribute("errorMsg", "Already this file name is existed, please choose another one, and try again.");
+                }
+            } catch (IOException e) {
+                model.addAttribute("errorMsg", "Upload process failed for some reason, please try again!");
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            model.addAttribute("errorMsg", "Upload process failed for some reason, please try again!");
-            e.printStackTrace();
         }
         homeController.setHomeInfo(model, userId);
         return "home";
@@ -59,7 +59,7 @@ public class FileController {
     public ResponseEntity<ByteArrayResource> getFile(@PathVariable String id, Authentication authentication, Model model) {
         File fileDB = fileService.getUserFileByFileName(userService.getUser(authentication.getName()).getUserid(), id);
 
-        if(fileDB == null) {
+        if (fileDB == null) {
             model.addAttribute("errorMsg", "Download file failed, please try again!");
         }
 
@@ -73,7 +73,7 @@ public class FileController {
         Integer userId = userService.getUser(authentication.getName()).getUserid();
         int rowCountEffected = fileService.deleteUserFile(userService.getUser(authentication.getName()).getUserid(), id);
 
-        if(rowCountEffected < 0) {
+        if (rowCountEffected < 0) {
             model.addAttribute("errorMsg", "Delete file failed, please try again!");
         } else {
             model.addAttribute("successMsg", "File deleted successfully.");
