@@ -38,8 +38,8 @@ class CloudStorageApplicationTests {
 
 	@AfterAll
 	public static void afterAll() {
-//		driver.quit();
-//		driver = null;
+		driver.quit();
+		driver = null;
 	}
 
 	@BeforeEach
@@ -49,9 +49,9 @@ class CloudStorageApplicationTests {
 
 	@AfterEach
 	public void afterEach() {
-//		if (this.driver != null) {
-//			driver.quit();
-//		}
+		if (this.driver != null) {
+			driver.quit();
+		}
 	}
 
 	@Autowired
@@ -76,6 +76,8 @@ class CloudStorageApplicationTests {
 		HomePage homePage = new HomePage(driver);
 		homePage.logout();
 
+		assertEquals(driver.getCurrentUrl(), baseURL + "/login");
+		driver.get(baseURL + "/home");
 		assertEquals(driver.getCurrentUrl(), baseURL + "/login");
 
 		testNoteCreationEditionDeletion();
