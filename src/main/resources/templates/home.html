@@ -57,8 +57,8 @@
                                 <tbody>
                                 <tr th:each="file: ${files}">
                                     <td>
-                                        <a target="_blank" class="btn btn-success" th:href="@{${'/download/' + file.fileName}}" >View</a>
-                                        <a  class="btn btn-danger" th:href="@{${'/delete/' + file.fileName}}">Delete</a>
+                                        <a target="_blank" class="btn btn-success" th:href="@{${'/download/' + file.fileName}}">View</a>
+                                        <a class="btn btn-danger" th:href="@{${'/delete/' + file.fileName}}">Delete</a>
                                     </td>
                                     <td scope="row" th:text="${file.fileName}"></td>
                                 </tr>
@@ -70,7 +70,12 @@
                         <button id="addNoteButton" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
-
+                        <div th:if="${NoteSuccessMsg}" class="alert alert-dark">
+                            <span th:text="${NoteSuccessMsg}"></spanth:text></span>
+                        </div>
+                        <div th:if="${NoteErrorMsg }" class="alert alert-danger">
+                            <span th:text="${NoteErrorMsg}"></spanth:text></span>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="userTable">
                                 <thead>
@@ -128,7 +133,12 @@
                         <button id="addCredentialButton" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
-
+                        <div th:if="${credentialSuccessMsg}" class="alert alert-dark">
+                            <span th:text="${credentialSuccessMsg}"></spanth:text></span>
+                        </div>
+                        <div th:if="${credentialErrorMsg }" class="alert alert-danger">
+                            <span th:text="${credentialErrorMsg}"></spanth:text></span>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" th:object="${credentials}" id="credentialTable">
                                 <thead>

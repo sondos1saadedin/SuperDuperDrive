@@ -28,10 +28,21 @@ public class NoteController {
     public String addNote(@ModelAttribute Note note, Model model, Authentication authentication) {
         Integer userId = userService.getUser(authentication.getName()).getUserid();
         note.setUserId(userId);
+        int editedRowsNum = -1;
         if(note.getNoteId() != null) {
-            noteService.updateNote(new Note(note.getNoteId(), note.getNoteTitle(), note.getNoteDescription(), userId));
+            editedRowsNum = noteService.updateNote(new Note(note.getNoteId(), note.getNoteTitle(), note.getNoteDescription(), userId));
+            if(editedRowsNum > 0) {
+                model.addAttribute("NoteSuccessMsg", "Note updated successfully.");
+            } else {
+                model.addAttribute("NoteErrorMsg", "Couldn't update the note, please try again!");
+            }
         } else {
-            noteService.addNote(note);
+            editedRowsNum = noteService.addNote(note);
+            if(editedRowsNum > 0) {
+                model.addAttribute("NoteSuccessMsg", "Note added successfully.");
+            } else {
+                model.addAttribute("NoteErrorMsg", "Couldn't add the note, please try again!");
+            }
         }
 
         homeController.setHomeInfo(model, userId);
@@ -43,7 +54,12 @@ public class NoteController {
     public String deleteNote(@PathVariable String noteId, Model model, Authentication authentication) {
         Integer userId = userService.getUser(authentication.getName()).getUserid();
         if(noteId!= null) {
-            noteService.deleteNote(Integer.parseInt(noteId));
+            int rowsDeletedNum = noteService.deleteNote(Integer.parseInt(noteId));
+            if(rowsDeletedNum > 0) {
+                model.addAttribute("NoteSuccessMsg", "Note deleted successfully.");
+            } else {
+                model.addAttribute("NoteErrorMsg", "Couldn't delete the note, please try again!");
+            }
         }
 
         homeController.setHomeInfo(model, userId);

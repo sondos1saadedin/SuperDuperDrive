@@ -18,6 +18,7 @@ public class UserService {
         this.hashService = hashService;
     }
 
+    // Create new User
     public int createUser(User user) {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
@@ -27,10 +28,12 @@ public class UserService {
         return userMapper.insert(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstname(), user.getLastname()));
     }
 
+    // return a user object by username
     public User getUser(String username) {
         return userMapper.getUserByUsername(username);
     }
 
+    // check if the username is available and not registered by someone.
     public boolean isUsernameAvailable(String username) {
         return userMapper.getUserByUsername(username) == null;
     }

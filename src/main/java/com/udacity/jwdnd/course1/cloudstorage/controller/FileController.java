@@ -34,6 +34,11 @@ public class FileController {
 
     @PostMapping("/upload")
     public String saveFile(@ModelAttribute("fileUpload") MultipartFile fileUpload, Model model, Authentication authentication) {
+        if(StringUtils.isEmpty(fileUpload.getOriginalFilename())) {
+            model.addAttribute("errorMsg", "Please choose file, and try again");
+            return "home";
+        }
+
         Integer userId = userService.getUser(authentication.getName()).getUserid();
         try {
             if(fileService.isFileNameAvailable(userId, fileUpload.getOriginalFilename())) {
@@ -70,6 +75,8 @@ public class FileController {
 
         if(rowCountEffected < 0) {
             model.addAttribute("errorMsg", "Delete file failed, please try again!");
+        } else {
+            model.addAttribute("successMsg", "File deleted successfully.");
         }
 
         homeController.setHomeInfo(model, userId);

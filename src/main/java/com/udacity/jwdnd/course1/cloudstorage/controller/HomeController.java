@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
@@ -42,7 +43,12 @@ public class HomeController {
 
     @GetMapping("/home")
     public String retrieveHomeInfo(Model model, Authentication authentication) {
-        Integer userId = userService.getUser(authentication.getName()).getUserid();
+        User user = userService.getUser(authentication.getName());
+        if(user == null) {
+            return "redirect:/login";
+        }
+
+        Integer userId = user.getUserid();
         setHomeInfo(model, userId);
         return "home";
     }

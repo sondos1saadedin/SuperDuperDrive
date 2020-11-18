@@ -18,18 +18,18 @@ public class CredentialService {
         this.encryptionService = encryptionService;
     }
 
-    public void addCredential(Credential credential) {
+    public int addCredential(Credential credential) {
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
         random.nextBytes(key);
         String encodedKey = Base64.getEncoder().encodeToString(key);
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
 
-        this.credentialMapper.insert(new Credential(null, credential.getUrl(),
+        return this.credentialMapper.insert(new Credential(null, credential.getUrl(),
                 credential.getUsername(), encodedKey, encryptedPassword, credential.getUserId()));
     }
 
-    public void updateCredential(Credential credential) {
+    public int updateCredential(Credential credential) {
         SecureRandom random = new SecureRandom();
         byte[] key = new byte[16];
         random.nextBytes(key);
@@ -38,11 +38,11 @@ public class CredentialService {
         credential.setKey(encodedKey);
         credential.setPassword(encryptedPassword);
 
-        this.credentialMapper.updateCredential(credential);
+        return this.credentialMapper.updateCredential(credential);
     }
 
-    public void deleteCredential(Integer credentialId) {
-        this.credentialMapper.deleteCredential(credentialId);
+    public int deleteCredential(Integer credentialId) {
+        return this.credentialMapper.deleteCredential(credentialId);
     }
 
     public List<Credential> getUserCredentials(Integer userId) {

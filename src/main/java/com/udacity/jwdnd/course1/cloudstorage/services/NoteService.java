@@ -15,18 +15,22 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public void addNote(Note note) {
-       this.noteMapper.insert(note);
+    // insert new Note to the DB.
+    public int addNote(Note note) {
+       return this.noteMapper.insert(note);
     }
 
+    // return the user's notes by user id.
     public List<Note> getUserNotes(Integer userId) {
         return this.noteMapper.getUserNotes(userId);
     }
 
+    // update the note data
     public int updateNote(Note note) {
         return this.noteMapper.updateUserNote(note);
     }
 
+    // delete the note from the DB
     public int deleteNote(int noteId) {
         return this.noteMapper.deleteUserNote(noteId);
     }
