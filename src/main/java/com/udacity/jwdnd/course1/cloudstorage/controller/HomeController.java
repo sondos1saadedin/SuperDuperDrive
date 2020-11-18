@@ -26,35 +26,33 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 @Controller
-//@RequestMapping("/home")
 public class HomeController {
     private final FileService fileService;
     private final UserService userService;
     private final NoteService noteService;
     private final CredentialService credentialService;
-    private final EncryptionService encryptionService;
 
 
-    public HomeController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService, EncryptionService encryptionService) {
+    public HomeController(FileService fileService, UserService userService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.userService = userService;
         this.noteService = noteService;
         this.credentialService = credentialService;
-        this.encryptionService = encryptionService;
     }
 
     @GetMapping("/home")
-    public String retrieveFiles(Model model, Authentication authentication) {
+    public String retrieveHomeInfo(Model model, Authentication authentication) {
         Integer userId = userService.getUser(authentication.getName()).getUserid();
-
-        model.addAttribute("files", fileService.getUserFiles(userId));
-        model.addAttribute("notes", noteService.getUserNotes(userId));
-        model.addAttribute("credentials", credentialService.getUserCredentials(userId));
-        model.addAttribute("encryptionService", encryptionService);
+        setHomeInfo(model, userId);
         return "home";
     }
 
 
+    public void setHomeInfo(Model model, Integer userId) {
+        model.addAttribute("files", fileService.getUserFiles(userId));
+        model.addAttribute("notes", noteService.getUserNotes(userId));
+        model.addAttribute("credentials", credentialService.getUserCredentials(userId));
+    }
 
 
 }

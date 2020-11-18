@@ -23,10 +23,13 @@ import java.io.IOException;
 public class FileController {
     private final FileService fileService;
     private final UserService userService;
+    private final HomeController homeController;
 
-    public FileController(FileService fileService, UserService userService) {
+
+    public FileController(FileService fileService, UserService userService, HomeController homeController) {
         this.fileService = fileService;
         this.userService = userService;
+        this.homeController = homeController;
     }
 
     @PostMapping("/upload")
@@ -43,7 +46,7 @@ public class FileController {
             model.addAttribute("errorMsg", "Upload process failed for some reason, please try again!");
             e.printStackTrace();
         }
-        model.addAttribute("files", fileService.getUserFiles(userService.getUser(authentication.getName()).getUserid()));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 
@@ -62,13 +65,14 @@ public class FileController {
 
     @GetMapping("/delete/{id}")
     public String deleteFile(@PathVariable String id, Authentication authentication, Model model) {
+        Integer userId = userService.getUser(authentication.getName()).getUserid();
         int rowCountEffected = fileService.deleteUserFile(userService.getUser(authentication.getName()).getUserid(), id);
 
         if(rowCountEffected < 0) {
             model.addAttribute("errorMsg", "Delete file failed, please try again!");
         }
 
-        model.addAttribute("files", fileService.getUserFiles(userService.getUser(authentication.getName()).getUserid()));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 }

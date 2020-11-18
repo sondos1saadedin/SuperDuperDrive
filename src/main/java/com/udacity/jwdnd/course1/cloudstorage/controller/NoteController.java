@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class NoteController {
     private final NoteService noteService;
     private final UserService userService;
+    private final HomeController homeController;
 
-    public NoteController(NoteService noteService, UserService userService) {
+    public NoteController(NoteService noteService, UserService userService, HomeController homeController) {
         this.noteService = noteService;
         this.userService = userService;
+        this.homeController = homeController;
     }
 
     @PostMapping("/addOrUpdateNote")
@@ -32,7 +34,7 @@ public class NoteController {
             noteService.addNote(note);
         }
 
-        model.addAttribute("notes", noteService.getUserNotes(userId));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 
@@ -44,7 +46,7 @@ public class NoteController {
             noteService.deleteNote(Integer.parseInt(noteId));
         }
 
-        model.addAttribute("notes", noteService.getUserNotes(userId));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 }

@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.*;
 public class CredentialController {
     private final UserService userService;
     private final CredentialService credentialService;
+    private final HomeController homeController;
 
-    public CredentialController(UserService userService, CredentialService credentialService) {
+
+    public CredentialController(UserService userService, CredentialService credentialService, HomeController homeController) {
         this.userService = userService;
         this.credentialService = credentialService;
+        this.homeController = homeController;
     }
 
     @PostMapping("/addOrUpdateCredential")
@@ -31,7 +34,7 @@ public class CredentialController {
             credentialService.addCredential(credential);
         }
 
-        model.addAttribute("credentials", credentialService.getUserCredentials(userId));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 
@@ -43,7 +46,7 @@ public class CredentialController {
             credentialService.deleteCredential(Integer.parseInt(credentialId));
         }
 
-        model.addAttribute("credentials", credentialService.getUserCredentials(userId));
+        homeController.setHomeInfo(model, userId);
         return "home";
     }
 
