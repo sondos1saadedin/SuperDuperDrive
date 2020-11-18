@@ -12,7 +12,7 @@ public class ElementFindingUtil {
         new WebDriverWait(driver, 40).until(ExpectedConditions.visibilityOf(element));
     }
 
-    public static void performJSECommand(WebDriver driver, WebElement ele) {
+    public static void performClickJSECommand(WebDriver driver, WebElement ele) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", ele);
     }
 }

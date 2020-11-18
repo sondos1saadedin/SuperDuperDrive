@@ -5,12 +5,15 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.page.HomePage;
 import com.udacity.jwdnd.course1.cloudstorage.page.LoginPage;
 import com.udacity.jwdnd.course1.cloudstorage.page.SignupPage;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -35,8 +38,8 @@ class CloudStorageApplicationTests {
 
 	@AfterAll
 	public static void afterAll() {
-		driver.quit();
-		driver = null;
+//		driver.quit();
+//		driver = null;
 	}
 
 	@BeforeEach
@@ -46,11 +49,16 @@ class CloudStorageApplicationTests {
 
 	@AfterEach
 	public void afterEach() {
-		if (this.driver != null) {
-			driver.quit();
-		}
+//		if (this.driver != null) {
+//			driver.quit();
+//		}
 	}
 
+	@Autowired
+	EncryptionService encryptionService;
+
+	@Autowired
+	CredentialService credentialService;
 
 	@Test
 	public void testHomePageFunctionalities() {
@@ -104,12 +112,21 @@ class CloudStorageApplicationTests {
 	private void testCredentialCreationEditionDeletion() {
 
 		HomePage homePage = new HomePage(driver);
-		homePage.createNewCredential(TEST_CREDENTIAL_URL, TEST_CREDENTIAL_USERNAME, TEST_CREDENTIAL_PASSWORD);
+		for(int i = 0; i < 3; i++) {
+			homePage.createNewCredential(TEST_CREDENTIAL_URL, TEST_CREDENTIAL_USERNAME, TEST_CREDENTIAL_PASSWORD);
+		}
 		Credential firstCredential = homePage.getFirstCredential();
 
 		assertEquals(TEST_CREDENTIAL_URL, firstCredential.getUrl());
 		assertEquals(TEST_CREDENTIAL_USERNAME, firstCredential.getUsername());
-		assertNotEquals(TEST_CREDENTIAL_PASSWORD, firstCredential.getPassword());
+		Credential dbCredential = credentialService.getCredentialById(firstCredential.getCredentialId());
+		assertEquals(encryptionService.encryptValue(TEST_CREDENTIAL_PASSWORD, dbCredential.getKey()), firstCredential.getPassword());
+
+
+		Credential editedCredentialInfo = homePage.getCredentialInfoInEditDialog();
+		assertEquals(TEST_CREDENTIAL_URL, editedCredentialInfo.getUrl());
+		assertEquals(TEST_CREDENTIAL_USERNAME, editedCredentialInfo.getUsername());
+		assertEquals(TEST_CREDENTIAL_PASSWORD, editedCredentialInfo.getPassword());
 
 		homePage.editCredential(TEST_CREDENTIAL_URL_V2, TEST_CREDENTIAL_USERNAME_V2, TEST_CREDENTIAL_PASSWORD_V2);
 
@@ -118,7 +135,10 @@ class CloudStorageApplicationTests {
 		assertEquals(TEST_CREDENTIAL_USERNAME_V2, firstCredentialV2.getUsername());
 		assertNotEquals(TEST_CREDENTIAL_PASSWORD_V2, firstCredentialV2.getPassword());
 
-		homePage.deleteCredential();
+		for(int i = 0; i < 3; i++) {
+			homePage.deleteCredential();
+		}
+
 		homePage.goToCredentialNav();
 		assertThrows(NoSuchElementException.class, () -> {driver.findElement(By.className("credentialUrl"));});
 	}

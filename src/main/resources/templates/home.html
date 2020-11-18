@@ -134,6 +134,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 20%" scope="col"></th>
+                                        <th style="width: 20%; display:none;"  scope="col"></th>
                                         <th style="width: 35%" scope="col">URL</th>
                                         <th style="width: 20%" scope="col">Username</th>
                                         <th style="width: 25%" scope="col">Password</th>
@@ -145,7 +146,8 @@
                                         <button type="button" class="editCredentialButton btn btn-success" th:onclick="javascript:showCredentialModal([[${credential}]])">Edit</button>
                                         <a class="deleteCredentialButton btn btn-danger" th:href="@{${'/deleteCredential/' + credential.credentialId}}">Delete</a>
                                     </td>
-                                    <th class="credentialUrl" scope="row" th:text="${credential.url}"></th>
+                                    <td class ="credentialId" style="display:none;" th:text="${credential.credentialId}"></td>
+                                    <td class="credentialUrl" scope="row" th:text="${credential.url}"></td>
                                     <td class="credentialUsername" th:text="${credential.username}"></td>
                                     <td class="credentialPassword" th:text="${credential.password}"></td>
                                 </tr>

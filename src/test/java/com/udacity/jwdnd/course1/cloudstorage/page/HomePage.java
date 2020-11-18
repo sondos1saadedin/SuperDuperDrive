@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import static com.udacity.jwdnd.course1.cloudstorage.utils.ElementFindingUtil.performJSECommand;
+import static com.udacity.jwdnd.course1.cloudstorage.utils.ElementFindingUtil.performClickJSECommand;
 import static com.udacity.jwdnd.course1.cloudstorage.utils.ElementFindingUtil.waitForVisibility;
 
 public class HomePage {
@@ -61,6 +61,9 @@ public class HomePage {
     @FindBy(className = "credentialUrl")
     private WebElement credentialUrl;
 
+    @FindBy(className = "credentialId")
+    private WebElement credentialId;
+
     @FindBy(className = "credentialUsername")
     private WebElement credentialUsername;
 
@@ -99,7 +102,7 @@ public class HomePage {
     public void createNewNote(String noteTitle, String noteDescription) {
         System.out.println("Creating new Note");
         goToNotesNav();
-        performJSECommand(this.driver, this.addNoteButton);
+        performClickJSECommand(this.driver, this.addNoteButton);
         waitForVisibility(this.driver, this.noteTitleInput);
 
         this.noteTitleInput.sendKeys(noteTitle);
@@ -111,7 +114,7 @@ public class HomePage {
     public void editNote(String noteTitle, String noteDescription) {
         System.out.println("Editing a Note");
         goToNotesNav();
-        performJSECommand(this.driver, this.editNoteButton);
+        performClickJSECommand(this.driver, this.editNoteButton);
         waitForVisibility(this.driver, this.noteTitleInput);
 
         this.noteTitleInput.clear();
@@ -141,17 +144,14 @@ public class HomePage {
 
     //Credential part
     public void goToCredentialNav() {
-        WebElement ele= driver.findElement(By.xpath("//*[@id='nav-credentials-tab']"));////*[@id="nav-credentials-tab"]
-        waitForVisibility(driver, ele);
-
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click()", ele);
+        performClickJSECommand(this.driver, navCredentials);
         waitForVisibility(this.driver, this.addCredentialButton);
     }
 
     public void createNewCredential(String url, String username, String password) {
         System.out.println("Creating new Credential");
         goToCredentialNav();
-        performJSECommand(this.driver, this.addCredentialButton);
+        performClickJSECommand(this.driver, this.addCredentialButton);
         waitForVisibility(this.driver, this.credentialUrlInput);
 
         this.credentialUrlInput.sendKeys(url);
@@ -165,7 +165,7 @@ public class HomePage {
     public void editCredential(String url, String username, String password) {
         System.out.println("Editing a Credential");
         goToCredentialNav();
-        performJSECommand(this.driver, this.editCredentialButton);
+        performClickJSECommand(this.driver, this.editCredentialButton);
         waitForVisibility(this.driver, this.credentialUrlInput);
 
         this.credentialUrlInput.clear();
@@ -180,10 +180,29 @@ public class HomePage {
         this.credentialSubmit.submit();
     }
 
+    public Credential getCredentialInfoInEditDialog() {
+        System.out.println("Getting Credential info from the the edit dialog");
+
+        goToCredentialNav();
+        performClickJSECommand(this.driver, this.editCredentialButton);
+        waitForVisibility(this.driver, this.credentialUrlInput);
+
+        Credential credential = new Credential();
+        credential.setCredentialId(Integer.parseInt(credentialId.getAttribute("textContent")));
+        credential.setUrl( this.credentialUrlInput.getAttribute("value"));
+        credential.setUsername(this.credentialUsernameInput.getAttribute("value"));
+        credential.setPassword(this.credentialPasswordInput.getAttribute("value"));
+
+        this.credentialSubmit.submit();
+        return credential;
+    }
+
+
     public Credential getFirstCredential() {
         System.out.println("Getting first Credential");
         goToCredentialNav();
         Credential credential = new Credential();
+        credential.setCredentialId(Integer.parseInt(credentialId.getAttribute("textContent")));
         credential.setUrl(credentialUrl.getText());
         credential.setUsername(credentialUsername.getText());
         credential.setPassword(credentialPassword.getText());
