@@ -39,7 +39,7 @@ public class CredentialController {
     @GetMapping("/deleteCredential/{credentialId}")
     public String deleteCredential(@PathVariable String credentialId, Model model, Authentication authentication) {
         Integer userId = userService.getUser(authentication.getName()).getUserid();
-        if(credentialId!= null) {
+        if(credentialId != null) {
             credentialService.deleteCredential(Integer.parseInt(credentialId));
         }
 
