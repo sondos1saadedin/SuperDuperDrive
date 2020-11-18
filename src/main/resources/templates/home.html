@@ -20,7 +20,7 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
                         <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
+                        <a class="nav-item nav-link credentialTab" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -125,7 +125,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button id="addCredentialButton" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -142,12 +142,12 @@
                                 <tbody>
                                 <tr th:each="credential: ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success" th:onclick="javascript:showCredentialModal([[${credential}]])">Edit</button>
-                                        <a class="btn btn-danger" th:href="@{${'/deleteCredential/' + credential.credentialId}}">Delete</a>
+                                        <button type="button" class="editCredentialButton btn btn-success" th:onclick="javascript:showCredentialModal([[${credential}]])">Edit</button>
+                                        <a class="deleteCredentialButton btn btn-danger" th:href="@{${'/deleteCredential/' + credential.credentialId}}">Delete</a>
                                     </td>
-                                    <th scope="row" th:text="${credential.url}"></th>
-                                    <td th:text="${credential.username}"></td>
-                                    <td th:text="${credential.password}"></td>
+                                    <th class="credentialUrl" scope="row" th:text="${credential.url}"></th>
+                                    <td class="credentialUsername" th:text="${credential.username}"></td>
+                                    <td class="credentialPassword" th:text="${credential.password}"></td>
                                 </tr>
                                 </tbody>
                             </table>

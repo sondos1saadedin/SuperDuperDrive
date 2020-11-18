@@ -1,4 +1,4 @@
-package com.udacity.jwdnd.course1.cloudstorage.testPage;
+package com.udacity.jwdnd.course1.cloudstorage.page;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -23,7 +23,7 @@ public class LoginPage {
     public void login(String username, String password) {
         this.usernameField.sendKeys(username);
         this.passwordField.sendKeys(password);
-        this.submitButton.click();
+        this.submitButton.submit();
     }
 
 }
